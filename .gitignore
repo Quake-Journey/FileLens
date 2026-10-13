@@ -1,0 +1,8 @@
+bin/
+obj/
+release/
+artifacts/
+FileLens-Win64.zip
+.vs/
+*.user
+*.suo
