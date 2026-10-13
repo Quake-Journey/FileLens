@@ -2,6 +2,8 @@
 
 Русская программа для Windows 10/11 x64: показывает приложения и службы, использующие выбранный файл. Переносимый EXE включает .NET; установка и интернет для работы не нужны.
 
+**Portable:** достаточно одного `FileLens.exe`. Установка программы и .NET не требуется; EXE можно хранить в любой папке или на флешке. При первом запуске встроенная среда извлекает служебные компоненты во временный каталог Windows.
+
 **[Скачать готовую программу](https://github.com/Quake-Journey/FileLens/releases/latest)** — `FileLens.exe` или архив `FileLens-Win64.zip`. Контрольные суммы опубликованы рядом в `SHA256SUMS.txt`.
 
 Исходники: [Quake-Journey/FileLens](https://github.com/Quake-Journey/FileLens). Изменения версий: [CHANGELOG.md](CHANGELOG.md).
