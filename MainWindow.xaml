@@ -15,6 +15,7 @@
       </StackPanel>
       <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
         <Border CornerRadius="6" Background="#182337" Padding="10,5" Margin="0,0,8,0"><TextBlock Text="WIN64" Foreground="{StaticResource Muted}" FontSize="10" FontWeight="Bold" /></Border>
+        <Button x:Name="SettingsButton" Content="Параметры" Padding="12,7" FontSize="11" Margin="0,0,8,0" Click="Settings_Click" />
         <Button x:Name="AdminButton" Content="Запустить от администратора" Padding="12,7" FontSize="11" Click="Admin_Click" />
       </StackPanel>
     </Grid>
@@ -83,7 +84,7 @@
     <Grid Grid.Row="6" Margin="0,14,0,0">
       <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
       <TextBlock x:Name="Footer" Text="Процессы, допускающие удаление, тоже могут быть в списке. Проверка не удаляет файл." FontSize="10" Foreground="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,0,14,0" VerticalAlignment="Center" />
-      <TextBlock Grid.Column="1" Text="FILELENS  1.0.2" FontSize="10" Foreground="#607590" VerticalAlignment="Center" />
+      <TextBlock Grid.Column="1" Text="FILELENS  1.1.0" FontSize="10" Foreground="#607590" VerticalAlignment="Center" />
     </Grid>
   </Grid>
 </Window>

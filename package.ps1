@@ -31,7 +31,7 @@ try {
 } finally { $archive.Dispose() }
 $manifest = [pscustomobject]@{
     Name = 'FileLens'
-    Version = '1.0.2'
+    Version = '1.1.0'
     Executable = $executable
     SHA256 = $hash
     Machine = 'AMD64 (0x8664)'

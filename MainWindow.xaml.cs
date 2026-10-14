@@ -15,6 +15,10 @@ public partial class MainWindow : Window
     private ScanResult? current;
     private CancellationTokenSource? scanCancellation;
     private bool scanning;
+    private Task? activeScan;
+    private readonly SemaphoreSlim activationGate = new(1, 1);
+    private SettingsWindow? settingsWindow;
+    private bool closed;
     private System.Windows.Threading.DispatcherTimer? copyPathFeedback;
     private static readonly Brush Good = new SolidColorBrush(Color.FromRgb(0x72, 0xE4, 0xCC));
     private static readonly Brush Warning = new SolidColorBrush(Color.FromRgb(0xFF, 0xBC, 0x7E));
@@ -33,7 +37,7 @@ public partial class MainWindow : Window
             Loaded += async (_, _) => await StartScanAsync();
         }
         else Loaded += (_, _) => PathBox.Focus();
-        Closed += (_, _) => { scanCancellation?.Cancel(); copyPathFeedback?.Stop(); };
+        Closed += (_, _) => { closed = true; scanCancellation?.Cancel(); copyPathFeedback?.Stop(); settingsWindow?.Close(); };
     }
 
     private void Window_SourceInitialized(object? sender, EventArgs e)
@@ -108,7 +112,13 @@ public partial class MainWindow : Window
         await StartScanAsync();
     }
 
-    private async Task StartScanAsync()
+    private Task StartScanAsync()
+    {
+        if (scanning) return activeScan ?? Task.CompletedTask;
+        return activeScan = RunScanAsync();
+    }
+
+    private async Task RunScanAsync()
     {
         if (scanning) return;
         string path;
@@ -148,6 +158,49 @@ public partial class MainWindow : Window
             ScanButton.Content = "Найти процессы";
             ScanProgress.Visibility = Visibility.Collapsed;
         }
+    }
+
+    internal ActivationReply GetActivationState() => new()
+    {
+        Path = PathBox.Text,
+        Scanning = scanning,
+        Minimized = WindowState == WindowState.Minimized,
+        WindowHandle = new WindowInteropHelper(this).Handle.ToInt64(),
+        ProcessIds = current?.Processes.Select(p => p.Pid).ToArray() ?? []
+    };
+
+    internal async Task OpenRequestedFileAsync(string? path)
+    {
+        if (closed) return;
+        if (path is not null) settingsWindow?.Close();
+        if (WindowState == WindowState.Minimized) WindowState = WindowState.Normal;
+        Show();
+        Activate();
+        if (string.IsNullOrWhiteSpace(path)) return;
+        await activationGate.WaitAsync();
+        try
+        {
+            if (scanning)
+            {
+                scanCancellation?.Cancel();
+                if (activeScan is not null) await activeScan;
+            }
+            if (closed) return;
+            PathBox.Text = path;
+            _ = StartScanAsync();
+        }
+        finally { activationGate.Release(); }
+    }
+
+    private void Settings_Click(object sender, RoutedEventArgs e)
+    {
+        if (settingsWindow is null)
+        {
+            settingsWindow = new SettingsWindow { Owner = this };
+            settingsWindow.Closed += (_, _) => settingsWindow = null;
+            settingsWindow.Show();
+        }
+        else settingsWindow.Activate();
     }
 
     internal void Present(ScanResult result)
@@ -246,6 +299,7 @@ public partial class MainWindow : Window
         try
         {
             var start = new ProcessStartInfo(Environment.ProcessPath!) { UseShellExecute = true, Verb = "runas" };
+            start.ArgumentList.Add("--elevated-relaunch");
             if (!string.IsNullOrWhiteSpace(PathBox.Text)) start.ArgumentList.Add(PathBox.Text);
             if (Process.Start(start) is not null) Close();
         }

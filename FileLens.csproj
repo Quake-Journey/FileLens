@@ -14,7 +14,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Assets\FileLens.ico</ApplicationIcon>
     <AssemblyName>FileLens</AssemblyName>
-    <Version>1.0.2</Version>
+    <Version>1.1.0</Version>
     <Company>FileLens</Company>
     <Description>Показывает процессы, использующие выбранный файл</Description>
     <DebugType>embedded</DebugType>

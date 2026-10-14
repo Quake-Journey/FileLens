@@ -16,6 +16,8 @@ internal static class CommandLine
 
     internal static int Run(string[] args)
     {
+        if (args.Length == 1 && args[0] == "--register-context-menu") { ShellIntegration.Register(); return 0; }
+        if (args.Length == 1 && args[0] == "--unregister-context-menu") { ShellIntegration.Unregister(); return 0; }
         if (args.Length == 3 && args[0] == "--scan-json")
         {
             ScanEnvelope envelope;
@@ -146,6 +148,8 @@ internal static class CommandLine
             window.ScanButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Check("Invalid path displayed in GUI", window.StatusTitle.Text == "Проверь путь" && window.ProcessGrid.Items.Count == 0);
 
+            ShellIntegrationTests.Run(artifactDirectory, target, [a.Pid, b.Pid], Check);
+
             a.Release();
             var one = Scan(target);
             Check("Refresh removes released owner", !one.Processes.Any(p => p.Pid == a.Pid) && one.Processes.Any(p => p.Pid == b.Pid));
@@ -220,7 +224,7 @@ internal static class CommandLine
         }
     }
 
-    private static void RenderPreview(MainWindow window, string output)
+    internal static void RenderPreview(Window window, string output)
     {
         window.WindowStartupLocation = WindowStartupLocation.Manual;
         window.Left = -20000;

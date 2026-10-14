@@ -56,7 +56,7 @@ public sealed class ScanResult
     public string ToReport()
     {
         var text = new StringBuilder();
-        text.AppendLine("FileLens 1.0.2 · Windows x64");
+        text.AppendLine("FileLens 1.1.0 · Windows x64");
         text.AppendLine($"Файл: {Path}");
         text.AppendLine($"Проверка: {CheckedAt:yyyy-MM-dd HH:mm:ss zzz}");
         text.AppendLine($"Администратор: {(Elevated ? "да" : "нет")}");
